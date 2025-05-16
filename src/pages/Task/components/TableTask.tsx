@@ -1,14 +1,27 @@
 import { Space, Table, type TableProps } from "antd";
-import type { Task } from "../types/task";
+import type { Task } from "../../../types/task";
 import type { HookAPI } from "antd/es/modal/useModal";
+import { memo, useCallback } from "react";
 
 interface Props {
     tasks: Task[];
-    setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+    handleDeleteTask: (id: number) => void;
     modal: HookAPI;
 }
 
-export default function TableTask({ tasks, setTasks, modal }: Props) {
+function TableTask({ tasks, handleDeleteTask, modal }: Props) {
+    const handleDelete = useCallback(
+        (id: number) => {
+            modal.confirm({
+                title: "Confirm Delete",
+                content: "Are you sure you want to delete this task?",
+                onOk: () => {
+                    handleDeleteTask(id);
+                },
+            });
+        },
+        [modal, handleDeleteTask]
+    );
     const columns: TableProps<Task>["columns"] = [
         {
             title: "Task Title",
@@ -43,17 +56,6 @@ export default function TableTask({ tasks, setTasks, modal }: Props) {
         },
     ];
 
-    const handleDelete = (id: number) => {
-        modal.confirm({
-            title: "Confirm Delete",
-            content: "Are you sure you want to delete this task?",
-            onOk: () => {
-                const updateTasks = tasks.filter((task) => task.id !== id);
-                setTasks(updateTasks);
-            },
-        });
-    };
-
     return (
         <div>
             <p>Todo list</p>
@@ -67,3 +69,5 @@ export default function TableTask({ tasks, setTasks, modal }: Props) {
         </div>
     );
 }
+
+export default memo(TableTask);

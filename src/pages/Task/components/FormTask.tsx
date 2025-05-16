@@ -1,16 +1,15 @@
 import { Button, Form, Input } from "antd";
-import type { Task } from "../types/task";
+import type { Task } from "../../../types/task";
 import type { HookAPI } from "antd/es/modal/useModal";
+import { memo, useCallback } from "react";
 
 interface Props {
-    tasks: Task[];
-    setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+    handleAddTask: (task: Task) => void;
     modal: HookAPI;
 }
-export default function FormTask({ tasks, setTasks, modal }: Props) {
+function FormTask({ handleAddTask, modal }: Props) {
     const [form] = Form.useForm();
-
-    const handleAdd = async () => {
+    const handleAdd = useCallback(async () => {
         try {
             const values = await form.validateFields();
             const newTask = {
@@ -18,8 +17,7 @@ export default function FormTask({ tasks, setTasks, modal }: Props) {
                 task: values.task,
                 time: Number(values.time),
             };
-            const updateTasks = [...tasks, newTask];
-            setTasks(updateTasks);
+            handleAddTask(newTask);
             form.resetFields();
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
@@ -28,7 +26,7 @@ export default function FormTask({ tasks, setTasks, modal }: Props) {
                 content: "Please check your input and try again.",
             });
         }
-    };
+    }, [form, handleAddTask, modal]);
     return (
         <Form
             className="flex items-center gap-2"
@@ -88,3 +86,5 @@ export default function FormTask({ tasks, setTasks, modal }: Props) {
         </Form>
     );
 }
+
+export default memo(FormTask);

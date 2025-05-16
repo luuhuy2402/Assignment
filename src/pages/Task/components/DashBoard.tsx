@@ -1,9 +1,15 @@
-import type { Task } from "../types/task";
+import { memo } from "react";
 
-export default function DashBoard({ tasks }: { tasks: Task[] }) {
-    const totalTasks = tasks.length;
-    const totalHours = tasks.reduce((sum, task) => sum + (task.time || 0), 0);
-    const totalDays = parseFloat((totalHours / 8).toFixed(2));
+interface DashboardProps {
+    dashboardData: {
+        totalTasks: number;
+        totalDays: number;
+        totalHours: number;
+    };
+}
+function DashBoard({ dashboardData }: DashboardProps) {
+    const { totalTasks, totalDays, totalHours } = dashboardData;
+
     return (
         <div className="flex items-center gap-4 pt-4 pb-20">
             <div className="border px-10 py-3 flex flex-col justify-center items-center">
@@ -21,3 +27,5 @@ export default function DashBoard({ tasks }: { tasks: Task[] }) {
         </div>
     );
 }
+
+export default memo(DashBoard);

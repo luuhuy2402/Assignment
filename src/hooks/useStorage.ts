@@ -10,7 +10,10 @@ export default function useStorage(
     });
 
     useEffect(() => {
-        localStorage.setItem("tasks", JSON.stringify(tasks));
+        const prev = localStorage.getItem("tasks");
+        if (prev !== JSON.stringify(tasks)) {
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
     }, [tasks]);
     return [tasks, setTasks];
 }
